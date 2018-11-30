@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<h1>Simple Guestbook</h1>
+<ul>
+    {% for entry in entries %}
+        <li>{{ entry.getContent() }}<br>Name: {{ entry.getName() }}<br>Date: {{ entry.getDate() }}</li>
+    {% endfor %}
+</ul>
+
+<form method="POST">
+Message
+<br>
+<textarea name="message" rows="10" cols="30"></textarea>
+<br>
+Name
+<br>
+<input type="text" name="name">
+<br><br>
+<input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

@@ -5,6 +5,9 @@ import com.codecool.model.Guestbook;
 
 import java.sql.*;
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 
 public class GuestbookDAOimpl implements GuestbookDAO {
@@ -44,9 +47,10 @@ public class GuestbookDAOimpl implements GuestbookDAO {
     private Entry getEntry(ResultSet resultSet) throws SQLException {
         String content = resultSet.getString("content");
         String name = resultSet.getString("name");
-        Date date = resultSet.getDate("date_time");
+        long date = resultSet.getDate("date_time").getTime();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneId.systemDefault());
 
-        return new Entry(content, name, date);
+        return new Entry(content, name, localDateTime);
     }
 
 }
