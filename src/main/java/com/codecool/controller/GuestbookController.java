@@ -9,22 +9,32 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 public class GuestbookController implements HttpHandler {
+    private GuestbookDAOimpl guestbookDAO;
+    private Guestbook guestbook;
+    private List<Entry> listOfEntries;
+
+    public GuestbookController() {
+        this.guestbookDAO = new GuestbookDAOimpl();
+    }
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
 
+        // for testing purposes
         String response = "odpowiedz";
         String method = httpExchange.getRequestMethod();
 
         if(method.equals("GET")){
 
-            Guestbook guestbook = new GuestbookDAOimpl().loadGuestbook();
-            List<Entry> listOfEntries = guestbook.getEntries();
+            guestbook = guestbookDAO.loadGuestbook();
+            listOfEntries = guestbook.getEntries();
 
             new EntriesView(httpExchange).showEntries(listOfEntries);
         }
@@ -36,9 +46,16 @@ public class GuestbookController implements HttpHandler {
             String formData = br.readLine();
 
             Map inputs = parseFormData(formData);
+            String message = (String) inputs.get("message");
+            String name = (String) inputs.get("name");
 
-            System.out.println(inputs.get("message") + " " + inputs.get("name"));
+            Entry newEntry = createNewEntry(message, name);
+            addNewEntryToList(newEntry);
+            addNewEntryToDatabse(newEntry);
 
+            // System.out.println(inputs.get("message") + " " + inputs.get("name"));
+
+            // for testing -> should be replaced with GET content
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream os = httpExchange.getResponseBody();
             os.write(response.getBytes());
@@ -55,6 +72,19 @@ public class GuestbookController implements HttpHandler {
             map.put(keyValue[0], value);
         }
         return map;
+    }
+
+    private Entry createNewEntry(String content, String name) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        return new Entry(content, name, currentDateTime);
+    }
+
+    private void addNewEntryToList(Entry newEntry) {
+        listOfEntries.add(newEntry);
+    }
+
+    private void addNewEntryToDatabse(Entry newEntry) {
+        guestbookDAO.addEntry(newEntry);
     }
 
 }
