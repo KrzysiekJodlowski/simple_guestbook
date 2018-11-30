@@ -13,7 +13,7 @@ public class App {
             HttpServer server = new GuestbookServer().getServer();
             server.start();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(); 
         }
 
     }
