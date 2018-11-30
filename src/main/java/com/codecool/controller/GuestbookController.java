@@ -19,6 +19,7 @@ public class GuestbookController implements HttpHandler {
     private GuestbookDAOimpl guestbookDAO;
     private Guestbook guestbook;
     private List<Entry> listOfEntries;
+    private EntriesView entriesView;
 
     public GuestbookController() {
         this.guestbookDAO = new GuestbookDAOimpl();
@@ -26,17 +27,14 @@ public class GuestbookController implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-
-        // for testing purposes
-        String response = "odpowiedz";
+        this.entriesView = new EntriesView(httpExchange);
         String method = httpExchange.getRequestMethod();
 
         if(method.equals("GET")){
 
             guestbook = guestbookDAO.loadGuestbook();
             listOfEntries = guestbook.getEntries();
-
-            new EntriesView(httpExchange).showEntries(listOfEntries);
+            entriesView.showEntries(listOfEntries);
         }
 
         if(method.equals("POST")){
@@ -51,15 +49,11 @@ public class GuestbookController implements HttpHandler {
 
             Entry newEntry = createNewEntry(message, name);
             addNewEntryToList(newEntry);
-            addNewEntryToDatabse(newEntry);
+            addNewEntryToDatabase(newEntry);
 
-            // System.out.println(inputs.get("message") + " " + inputs.get("name"));
-
-            // for testing -> should be replaced with GET content
-            httpExchange.sendResponseHeaders(200, response.length());
-            OutputStream os = httpExchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            guestbook = guestbookDAO.loadGuestbook();
+            listOfEntries = guestbook.getEntries();
+            entriesView.showEntries(listOfEntries);
         }
     }
 
@@ -83,7 +77,7 @@ public class GuestbookController implements HttpHandler {
         listOfEntries.add(newEntry);
     }
 
-    private void addNewEntryToDatabse(Entry newEntry) {
+    private void addNewEntryToDatabase(Entry newEntry) {
         guestbookDAO.addEntry(newEntry);
     }
 
