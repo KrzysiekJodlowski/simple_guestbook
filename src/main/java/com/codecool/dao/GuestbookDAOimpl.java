@@ -41,7 +41,26 @@ public class GuestbookDAOimpl implements GuestbookDAO {
     @Override
     public boolean addEntry(Entry entry) {
 
-        return false;
+        String query = "INSERT INTO guestbook " +
+                "(content, name, date_time) " +
+                "VALUES (" +
+                "'" + entry.getContent() + "', " +
+                "'" + entry.getName() + "', " +
+                "now())";
+        PreparedStatement statement = null;
+        boolean addEntrySuccess = false;
+
+        try {
+            Connection connection = new DBCPDataSource().getConnection();
+            statement = connection.prepareStatement(query);
+            statement.execute();
+            statement.close();
+            connection.close();
+            addEntrySuccess = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return addEntrySuccess;
     }
 
     private Entry getEntry(ResultSet resultSet) throws SQLException {
