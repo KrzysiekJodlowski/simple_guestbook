@@ -15,4 +15,16 @@ public class Entry {
         this.date = date;
     }
 
+    public String getContent() {
+        return this.content;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Date getDate() {
+        return this.date;
+    }
+
 }
