@@ -8,5 +8,5 @@ public interface GuestbookDAO {
 
     Guestbook loadGuestbook();
     boolean addEntry(Entry entry);
-    
+
 }
