@@ -1,6 +1,7 @@
 package com.codecool.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Entry {
@@ -24,8 +25,8 @@ public class Entry {
     }
 
     public String getDate() {
-        return this.date.getDayOfMonth() + "." + this.date.getMonthValue() + "." + this.date.getYear() + " " +
-                this.date.getHour() + ":" + this.date.getMinute() + ":" + this.date.getSecond();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        return this.date.format(formatter);
     }
 
 }
