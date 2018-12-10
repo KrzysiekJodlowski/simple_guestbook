@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 
 public class GuestbookDAOimpl implements GuestbookDAO {
@@ -18,7 +19,7 @@ public class GuestbookDAOimpl implements GuestbookDAO {
     public Guestbook loadGuestbook() {
 
         Guestbook guestbook = new Guestbook();
-        String query = "SELECT * FROM guestbook";
+        String query = "SELECT content, name, date_trunc('second', date_time) AS time FROM guestbook";
 
         try {
             Connection connection = new DBCPDataSource().getConnection();
@@ -64,7 +65,8 @@ public class GuestbookDAOimpl implements GuestbookDAO {
     private Entry getEntry(ResultSet resultSet) throws SQLException {
         String content = resultSet.getString("content");
         String name = resultSet.getString("name");
-        long date = resultSet.getDate("date_time").getTime();
+
+        long date = resultSet.getTimestamp("time").getTime();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneId.systemDefault());
 
         return new Entry(content, name, localDateTime);
